@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UpdateTest</title>
+
+    <!--
+    <script defer src="/__/firebase/9.6.1/firebase-app-compat.js"></script>-->
+    <!-- include only the Firebase features as you need 
+    <script defer src="/__/firebase/9.6.1/firebase-auth-compat.js"></script>
+    <script defer src="/__/firebase/9.6.1/firebase-database-compat.js"></script>
+    <script defer src="/__/firebase/9.6.1/firebase-firestore-compat.js"></script>
+    <script defer src="/__/firebase/9.6.1/firebase-functions-compat.js"></script>
+    <script defer src="/__/firebase/9.6.1/firebase-messaging-compat.js"></script>
+    <script defer src="/__/firebase/9.6.1/firebase-storage-compat.js"></script>
+    <script defer src="/__/firebase/9.6.1/firebase-analytics-compat.js"></script>
+    <script defer src="/__/firebase/9.6.1/firebase-remote-config-compat.js"></script>
+    <script defer src="/__/firebase/9.6.1/firebase-performance-compat.js"></script>-->
+    <!-- 
+      initialize the SDK after all desired features are loaded, set useEmulator to false
+      to avoid connecting the SDK to running emulators.
+    -->
+    <!--<script defer src="/__/firebase/init.js?useEmulator=true"></script>-->
+
+    <style media="screen">
+      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
+      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
+      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
+      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
+      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
+      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
+      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
+      @media (max-width: 600px) {
+        body, #message { margin-top: 0; background: white; box-shadow: none; }
+        body { border-top: 16px solid #ffa100; }
+      }
+    </style>
+
+  </head>
+  <body>
+
+    <div >
+      <input id="test" type="file" @change="read">
+    </div>
+    <div id="app">
+      <h3>タイトル名</h3>
+      <input v-model="title" id="title" placeholder="edit this" />
+      <p>Title : {{ title }}</p>
+
+      <h3>開発者名</h3>
+      <input v-model="developer" id="developer" placeholder="edit this" />
+      <p>Developer : {{ developer }} </p>
+      
+      <h3>説明文</h3>
+      <textarea v-model="caption" id ="caption" placeholder="add multiple lines" rows= "10" cols = "50" spellcheck="false"></textarea>
+      <p>Caption : {{ caption }} </p>
+
+      <h3>Tag(複数選択可)</h3>
+      <select size ="5" v-model="tags" id="tags" multiple>
+          <option value="ACTION">Action</option>
+          <option value="SHOOTING">SHOOTING</option>
+          <option value="RPG">RPG</option>
+          <option value="PUZZLE">PUZZLE</option>
+          <option value="SIMULATION">SIMULATION</option>
+          <option value="ADVENTURE">ADVENTURE</option>
+          <option value="FIGHTING">FIGHTING</option>
+          <option value="RACE">RACE</option>
+          <option value="RHYTHM">RHYTHM</option>
+          <option value="SPORTS">SPORTS</option>
+          <option value="ETCETRA">ETCETRA</option>
+      </select>
+      <br/>
+      <span>Tag: {{ tags }}</span>`
+
+      <h3>subtag</h3>
+      <input v-model="subtag1" id="subtag1" placeholder="edit this" />
+      <input v-model="subtag2" id="subtag2" placeholder="edit this" />
+      <input v-model="subtag3" id="subtag3" placeholder="edit this" />
+      <p>Subtag :<br> {{ subtag1 }}<br>{{ subtag2 }}<br>{{ subtag3 }}</p>
+
+      <div>
+          <h3>サムネを選択</h3>
+          <div v-if="!tmbdataurl">
+          <input type="file" id="tmb" accept = "images/*" @change="readTmb">
+          </div>
+          <div v-else>
+              <div id="tmb-preview">
+                  <span v-if="tmbfile.name != ''">{{ tmbfile.name }}</span>
+                  <img :src="tmbdataurl" v-if="tmbdataurl">
+              </div>
+              <button type ="button" @click = "resetTmb">サムネのリセット</button>
+          </div>
+      </div>`
+
+      <div>
+          <h3>プレイ画像を選択</h3>
+          <div v-if="!imgdataurl">
+              <input type="file" id="img" accept = "images/*" @change="readImg">
+          </div>
+          <div v-else>
+              <div id="img-preview">
+                  <span v-if="imgfile.name != ''">{{ imgfile.name }}</span>
+                  <img :src="imgdataurl" v-if="imgdataurl">
+              </div>
+              <button type ="button" @click = "resetImg">サムネのリセット</button>
+          </div>
+      </div>
+
+      <button type ="button" @click = "showData">submit</button>
+  </div>
+    </div>
+
+    <div id="imgSample" style="display:block;width:200px;height:200px;background-color:#c0c0c0;"></div>
+
+   <!-- <div id="message">
+      <h2>Welcome</h2>
+      <h1>Firebase Hosting Setup Complete</h1>
+      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
+      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
+    </div>
+    <p id="load">Firebase SDK Loading&hellip;</p>!-->
+
+    <script>
+     /* document.addEventListener('DOMContentLoaded', function() {
+        const loadEl = document.querySelector('#load');
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+        // // The Firebase SDK is initialized and available here!
+        //
+        // firebase.auth().onAuthStateChanged(user => { });
+        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
+        // firebase.firestore().doc('/foo/bar').get().then(() => { });
+        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
+        // firebase.messaging().requestPermission().then(() => { });
+        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
+        // firebase.analytics(); // call to activate
+        // firebase.analytics().logEvent('tutorial_completed');
+        // firebase.performance(); // call to activate
+        //
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+
+        try {
+          let app = firebase.app();
+          let features = [
+            'auth', 
+            'database', 
+            'firestore',
+            'functions',
+            'messaging', 
+            'storage', 
+            'analytics', 
+            'remoteConfig',
+            'performance',
+          ].filter(feature => typeof app[feature] === 'function');
+          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
+        } catch (e) {
+          console.error(e);
+          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+        }
+      });*/
+    </script>
+
+
+    <script src="https://unpkg.com/vue@next"></script>
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+      import { getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js";
+      import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+    
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyBtJ2EN7_JznLs03fYngKzl0nN6F9-5G9I",
+        authDomain: "vuetest-103b3.firebaseapp.com",
+        projectId: "vuetest-103b3",
+        storageBucket: "vuetest-103b3.appspot.com",
+        messagingSenderId: "640887077281",
+        appId: "1:640887077281:web:a87322542e2246c1f2f3e0"
+      };
+      const App = initializeApp(firebaseConfig);
+
+      const db = getFirestore();
+      const storage = getStorage();
+      const storageRef = ref(storage, '1mages/test.jpeg');
+      //テスト用ダミー
+      const file = new File(['a'], 'image.jpeg', {
+        type: 'image/jpeg',
+      });
+      console.log(file);
+      console.log(file.size);
+      console.log(file.name);
+      console.log(file.type);
+
+      // 'file' comes from the Blob or File API
+      uploadBytes(storageRef, file).then((snapshot) => {
+      console.log('Uploaded a blob or file!');
+      });
+
+
+
+      console.log(storageRef);
+
+      console.log(storage);
+      console.log(db);
+    </script>
+
+    <script src ='../src/main.js'></script>
+  </body>
+</html>
