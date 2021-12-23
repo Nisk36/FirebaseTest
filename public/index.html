@@ -41,25 +41,22 @@
   </head>
   <body>
 
-    <div >
-      <input id="test" type="file" @change="read">
-    </div>
     <div id="app">
-      <h3>タイトル名</h3>
-      <input v-model="title" id="title" placeholder="edit this" />
+      <h3>タイトル名:最大15字</h3>
+      <input v-model="title" id="title" placeholder="edit this" required maxlength="15" />
       <p>Title : {{ title }}</p>
 
-      <h3>開発者名</h3>
-      <input v-model="developer" id="developer" placeholder="edit this" />
+      <h3>開発者名:最大10字</h3>
+      <input v-model="developer" id="developer" placeholder="edit this" required maxlength="10"/>
       <p>Developer : {{ developer }} </p>
       
-      <h3>説明文</h3>
-      <textarea v-model="caption" id ="caption" placeholder="add multiple lines" rows= "10" cols = "50" spellcheck="false"></textarea>
+      <h3>説明文:最大500字</h3>
+      <textarea v-model="caption" id ="caption" placeholder="add multiple lines" rows= "10" cols = "50" spellcheck="false" required maxlength="500"></textarea>
       <p>Caption : {{ caption }} </p>
 
-      <h3>Tag(複数選択可)</h3>
-      <select size ="5" v-model="tags" id="tags" multiple>
-          <option value="ACTION">Action</option>
+      <h3>ジャンル</h3>
+      <select size ="5" v-model="genre" id="tags" required>
+          <option value="ACTION">ACTION</option>
           <option value="SHOOTING">SHOOTING</option>
           <option value="RPG">RPG</option>
           <option value="PUZZLE">PUZZLE</option>
@@ -72,18 +69,12 @@
           <option value="ETCETRA">ETCETRA</option>
       </select>
       <br/>
-      <span>Tag: {{ tags }}</span>`
-
-      <h3>subtag</h3>
-      <input v-model="subtag1" id="subtag1" placeholder="edit this" />
-      <input v-model="subtag2" id="subtag2" placeholder="edit this" />
-      <input v-model="subtag3" id="subtag3" placeholder="edit this" />
-      <p>Subtag :<br> {{ subtag1 }}<br>{{ subtag2 }}<br>{{ subtag3 }}</p>
+      <span>Genre : {{ genre }}</span>
 
       <div>
           <h3>サムネを選択</h3>
           <div v-if="!tmbdataurl">
-          <input type="file" id="tmb" accept = "images/*" @change="readTmb">
+          <input type="file" id="tmb" accept = "images/*" @change="readTmb" required>
           </div>
           <div v-else>
               <div id="tmb-preview">
@@ -97,7 +88,7 @@
       <div>
           <h3>プレイ画像を選択</h3>
           <div v-if="!imgdataurl">
-              <input type="file" id="img" accept = "images/*" @change="readImg">
+              <input type="file" id="img" accept = "images/*" @change="readImg" required>
           </div>
           <div v-else>
               <div id="img-preview">
@@ -108,11 +99,15 @@
           </div>
       </div>
 
+      <h3>作品URL</h3>
+      <input v-model="URL" id="URL" placeholder="edit this" required/>
+      <p>作品URL : {{ URL }} </p>
+
+      <br>
+
       <button type ="button" @click = "showData">submit</button>
-  </div>
     </div>
 
-    <div id="imgSample" style="display:block;width:200px;height:200px;background-color:#c0c0c0;"></div>
 
    <!-- <div id="message">
       <h2>Welcome</h2>
@@ -184,29 +179,118 @@
 
       const db = getFirestore();
       const storage = getStorage();
-      const storageRef = ref(storage, '1mages/test.jpeg');
+
+
+      /*const storageRef = ref(storage, '1mages/test.jpeg');
       //テスト用ダミー
       const file = new File(['a'], 'image.jpeg', {
         type: 'image/jpeg',
       });
-      console.log(file);
-      console.log(file.size);
-      console.log(file.name);
-      console.log(file.type);
 
+      //ファイルの送信
       // 'file' comes from the Blob or File API
       uploadBytes(storageRef, file).then((snapshot) => {
       console.log('Uploaded a blob or file!');
-      });
+      });*/
+
+      const app = Vue.createApp({
+      data(){
+        return{
+            title:'',
+            developer:'',
+            caption:'',
+            genre:'',
+            tmbdataurl:null,
+            tmbfile:null,
+            imgdataurl:null,
+            imgfile:null,
+            URL:'',
+          }
+      },
+      methods:{
+        readTmb(){
+            const inputTmb = document.getElementById('tmb');
+            if(inputTmb.files.length == 0){
+                return ;
+            }
+            
+            this.tmbfile = inputTmb.files[0];
+            console.log(this.tmbdataurl);
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.tmbdataurl = e.target.result;
+            }
+            reader.readAsDataURL(this.tmbfile);
+        },
+        resetTmb(){
+            this.tmbdataurl = null;
+            this.tmbfile = null;
+        },
+
+        readImg(){
+            const inputImg = document.getElementById('img');
+            if(inputImg.files.length == 0){
+                return ;
+            }
+            
+            this.imgfile = inputImg.files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.imgdataurl = e.target.result;
+            }
+            reader.readAsDataURL(this.imgfile);
+        },
+        resetImg(){
+            this.imgdataurl = null;
+            this.imgfile = null;
+        },
+
+        showData(){
+            var data={};
+            console.log(this.title);
+            console.log(developer.value);
+            console.log(caption.value);
+
+            data["title"] = title.value;
+            data["developer"] = developer.value;
+            data["caption"] = caption.value;
+
+            data["tags"] = this.genre;
+            data["URL"] = this.URL;
+
+            //連想配列をJsonに変化
+            var json_data = JSON.stringify(data);
+            console.log(json_data);  
+            const blob = new Blob([json_data],{type:"application/json"});
+            console.log(blob);
+            const storageRefjson = ref(storage,this.developer+'/.data.json');
+            uploadBytes(storageRefjson, blob).then((snapshot) => {
+              console.log('Uploaded Json !');
+              alert("JSONファイルをアップロードしました");
+            });
+            
+            const storageRefTmb = ref(storage, this.developer+'/thumbnail');
+            uploadBytes(storageRefTmb, this.tmbfile).then((snapshot) => {
+              console.log('Uploaded thumbnail !');
+              alert("サムネイルをアップロードしました");
+            });
+            
+            const storageRefImg = ref(storage, this.developer+'/image');
+            uploadBytes(storageRefImg, this.imgfile).then((snapshot) => {
+              console.log('Uploaded image !');
+              alert("ゲーム画像をアップロードしました");
+            });
+        },
+
+    }
+})
+
+app.mount('#app')
 
 
 
-      console.log(storageRef);
-
-      console.log(storage);
-      console.log(db);
+      
     </script>
 
-    <script src ='../src/main.js'></script>
   </body>
 </html>
