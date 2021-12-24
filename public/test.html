@@ -8,5 +8,174 @@
 </head>
 <body>
     <p>Hello!!</p>
+    <img id="myimg">
+    <div id="contents"></div>
 </body>
+
+
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtJ2EN7_JznLs03fYngKzl0nN6F9-5G9I",
+      authDomain: "vuetest-103b3.firebaseapp.com",
+      projectId: "vuetest-103b3",
+      storageBucket: "vuetest-103b3.appspot.com",
+      messagingSenderId: "640887077281",
+      appId: "1:640887077281:web:a87322542e2246c1f2f3e0"
+    };
+    const App = initializeApp(firebaseConfig);
+
+    const db = getFirestore();
+    const storage = getStorage();
+    console.log(storage);
+
+
+    /*getDownloadURL(ref(storage, '1313/image'))
+        .then((url) => {
+    // `url` is the download URL for 'images/stars.jpg'
+
+    var img = document.getElementById('myimg');
+    img.src = url;
+
+    //image動的に生成
+    var p = document.createElement('p');
+    p.innerHTML = "ゲーム画像"
+    var img_element = document.createElement('img');
+    img_element.src = url;
+    var content_area = document.getElementById("contents");
+    content_area.appendChild(p);
+    content_area.appendChild(img_element); 
+    }).catch(function(error) {
+        console.log(error);
+    });*/
+
+    /*getDownloadURL(ref(storage,'test/.data.json'))
+        .then((url) => {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    var p = document.createElement('p');
+                    p.innerHTML = "JSONデータ"
+                    var p_json = document.createElement('p');
+                    p_json.innerText = JSON.stringify(data);
+                    var content_area = document.getElementById("contents");
+                    content_area.appendChild(p);
+                    content_area.appendChild(p_json); 
+                    //
+                    var obj = JSON.parse(JSON.stringify(data));
+                    console.log(obj.title);
+                });
+
+        }).catch(function(error){
+    });*/
+    const storageRef = ref(storage);
+    /*document.addEventListener('DOMContentLoaded', function() {
+      var table = document.createElement( 'table' );
+      var tableBody = document.createElement("tbody");
+
+      listAll(storageRef)
+        .then((res) => {
+        res.prefixes.forEach((folderRef) => {
+          var row = document.createElement("tr");
+          var cell = document.createElement("td");
+          cell.appendChild(document.createTextNode(folderRef.name));
+          console.log(folderRef.name);
+          row.appendChild(cell);
+          tableBody.appendChild(row);
+          table.appendChild(tableBody);
+        });
+        document.getElementById("table").appendChild(table);
+        }).catch((error) => {
+            console.log(error);
+      });
+    })*/
+
+    listAll(storageRef)
+        .then((res) => {
+        res.prefixes.forEach((folderRef) => {
+          console.log(folderRef.name);
+          var testRef = ref(storage,folderRef.name);
+          console.log(testRef);
+          //フォルダ内の探索
+          listAll(testRef)
+            .then((res) => {
+                res.items.forEach((itemRef) => {
+                    //JSONの表示
+                    if(itemRef.name == '.data.json'){
+                        console.log(testRef.name + itemRef.name);
+                        getDownloadURL(itemRef)
+                         .then((url) => {
+                            fetch(url)
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log(data)
+                                //
+                                var p = document.createElement('p');
+                                p.innerHTML = "JSONデータ"
+                                var p_json = document.createElement('p');
+                                p_json.innerText = JSON.stringify(data);
+                                var content_area = document.getElementById("contents");
+                                content_area.appendChild(p);
+                                content_area.appendChild(p_json); 
+                                //
+                                var obj = JSON.parse(JSON.stringify(data));
+                                console.log(obj.title);
+                            });
+                            }).catch(function(error){
+                        });
+                        
+                    }
+                    else if(itemRef.name == 'thumbnail'){
+                        console.log(itemRef);
+                        getDownloadURL(ref(itemRef))
+                            .then((url) => {
+
+                        //image動的に生成
+                        var p = document.createElement('p');
+                        p.innerHTML = "サムネ画像"
+                        var img_element = document.createElement('img');
+                        img_element.src = url;
+                        var content_area = document.getElementById("contents");
+                        content_area.appendChild(p);
+                        content_area.appendChild(img_element); 
+                        }).catch(function(error) {
+                            console.log(error);
+                        });
+                    }
+                    else if(itemRef.name == 'image'){
+                        console.log(itemRef);
+                        getDownloadURL(ref(itemRef))
+                            .then((url) => {
+
+                        //image動的に生成
+                        var p = document.createElement('p');
+                        p.innerHTML = "ゲーム画像"
+                        var img_element = document.createElement('img');
+                        img_element.src = url;
+                        var content_area = document.getElementById("contents");
+                        content_area.appendChild(p);
+                        content_area.appendChild(img_element); 
+                        }).catch(function(error) {
+                            console.log(error);
+                        });
+                    }
+                });
+                }).catch((itemError) => {
+                    console.log(itemError);
+                });
+        //
+            });
+        }).catch((folderError) => {
+            console.log(folderError);
+        });
+
+
+</script>
 </html>
