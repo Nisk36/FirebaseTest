@@ -99,7 +99,7 @@
 
     listAll(storageRef)
         .then((res) => {
-        res.prefixes.forEach((folderRef) => {
+          res.prefixes.forEach((folderRef) => {
           console.log(folderRef.name);
           var testRef = ref(storage,folderRef.name);
           console.log(testRef);
@@ -108,32 +108,31 @@
             .then((res) => {
                 res.items.forEach((itemRef) => {
                     //JSONの表示
-                    if(itemRef.name == '_.data.json'){
-                        console.log(testRef.name+itemRef.name);
+                    if(itemRef.name == folderRef.name+'_.data.json'){
+                        console.log(itemRef.name);
                         getDownloadURL(itemRef)
                          .then((url) => {
                             fetch(url)
                             .then(response => response.json())
                             .then(data => {
-                                console.log(data)
                                 var obj = JSON.parse(JSON.stringify(data));
                                 console.log(obj);
                                 //
-                                var p = document.createElement('p');
+                                /*var p = document.createElement('p');
                                 p.innerHTML = testRef.name + "のJSONデータ"
                                 var p_json = document.createElement('p');
                                 p_json.innerText = JSON.stringify(data);
                                 var content_area = document.getElementById("contents");
                                 content_area.appendChild(p);
-                                content_area.appendChild(p_json); 
+                                content_area.appendChild(p_json); */
                                 //
                             });
                             }).catch(function(error){
                         });
                         
                     }
-                    else if(itemRef.name == 'image'){
-                        console.log(testRef.name+itemRef.name);
+                    else if(itemRef.name == folderRef.name+'image'){
+                        console.log(itemRef.name);
                         getDownloadURL(ref(itemRef))
                             .then((url) => {
                                 fetch(url)
@@ -149,13 +148,58 @@
                         img_element.src = url;
                         var content_area = document.getElementById("contents");
                         content_area.appendChild(p);
-                        content_area.appendChild(img_element);*/ 
+                        content_area.appendChild(img_element);*/
+
                         }).catch(function(error) {
                             console.log(error);
                         });
                     }
-                    else if(itemRef.name == 'thumbnail'){
-                        console.log(testRef.name+itemRef.name);
+                    else if(itemRef.name == folderRef.name+'image2'){
+                        console.log(itemRef.name);
+                        getDownloadURL(ref(itemRef))
+                            .then((url) => {
+                                fetch(url)
+                                    .then(response => response.blob())
+                                    .then(blob => new File([blob], "image"))
+                                    .then(file => {
+                                        console.log(file);
+                                    })
+                        //image動的に生成
+                        /*var p = document.createElement('p');
+                        p.innerHTML = testRef.name + "のゲーム画像"
+                        var img_element = document.createElement('img');
+                        img_element.src = url;
+                        var content_area = document.getElementById("contents");
+                        content_area.appendChild(p);
+                        content_area.appendChild(img_element); */
+                        }).catch(function(error) {
+                            console.log(error);
+                        });
+                    }
+                    else if(itemRef.name == folderRef.name+'image3'){
+                        console.log(itemRef.name);
+                        getDownloadURL(ref(itemRef))
+                            .then((url) => {
+                                fetch(url)
+                                    .then(response => response.blob())
+                                    .then(blob => new File([blob], "image"))
+                                    .then(file => {
+                                        console.log(file);
+                                    })
+                        //image動的に生成
+                        /*var p = document.createElement('p');
+                        p.innerHTML = testRef.name + "のゲーム画像"
+                        var img_element = document.createElement('img');
+                        img_element.src = url;
+                        var content_area = document.getElementById("contents");
+                        content_area.appendChild(p);
+                        content_area.appendChild(img_element); */
+                        }).catch(function(error) {
+                            console.log(error);
+                        });
+                    }
+                    else if(itemRef.name == folderRef+'_thumbnail'){
+                        console.log(itemRef.name)
                         getDownloadURL(ref(itemRef))
                             .then((url) => {
                                 fetch(url)
@@ -173,6 +217,30 @@
                         var content_area = document.getElementById("contents");
                         content_area.appendChild(p);
                         content_area.appendChild(img_element); */
+                        }).catch(function(error) {
+                            console.log(error);
+                        });
+                    }
+                    else if(itemRef.name == folderRef.name+'_icon'){
+                        console.log(itemRef.name);
+                        getDownloadURL(ref(itemRef))
+                            .then((url) => {
+                                fetch(url)
+                                    .then(response => response.blob())
+                                    .then(blob => new File([blob], "thumbnail"))
+                                    .then(file => {
+                                        console.log(file);
+                                    })
+
+                        //image動的に生成
+                        /*var p = document.createElement('p');
+                        p.innerHTML = testRef.name + "のサムネ画像"
+                        var img_element = document.createElement('img');
+                        img_element.src = url;
+                        var content_area = document.getElementById("contents");
+                        content_area.appendChild(p);
+                        content_area.appendChild(img_element);*/
+
                         }).catch(function(error) {
                             console.log(error);
                         });
