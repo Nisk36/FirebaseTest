@@ -44,15 +44,15 @@
     <div id="app">
       <h3>タイトル名:最大15字</h3>
       <input v-model="title" id="title" placeholder="edit this" required maxlength="15" />
-      <p>Title : {{ title }}</p>
+      <!--<p>Title : {{ title }}</p>!-->
 
       <h3>開発者名:最大10字</h3>
       <input v-model="developer" id="developer" placeholder="edit this" required maxlength="10"/>
-      <p>Developer : {{ developer }} </p>
+      <!--<p>Developer : {{ developer }} </p>!-->
       
       <h3>説明文:最大500字</h3>
-      <textarea v-model="caption" id ="caption" placeholder="add multiple lines" rows= "10" cols = "50" spellcheck="false" required maxlength="500"></textarea>
-      <p>Caption : {{ caption }} </p>
+      <textarea v-model="caption" id ="caption" placeholder="edit this" rows= "10" cols = "50" spellcheck="false" required maxlength="500"></textarea>
+      <!--<p>Caption : {{ caption }} </p>!-->
 
       <h3>ジャンル</h3>
       <select size ="5" v-model="genre" id="tags" required>
@@ -72,31 +72,73 @@
       <span>Genre : {{ genre }}</span>
 
       <div>
-          <h3>サムネを選択</h3>
+        <h3>アイコン画像を選択(216×216)</h3>
+        <div v-if="!icondataurl">
+        <input type="file" id="icon" accept=".png, .jpeg, .jpg, .ico" @change="readicon" width="216" height="216" required>
+        </div>
+        <div v-else>
+            <div id="icon-preview">
+                <span v-if="iconfile.name != ''">{{ iconfile.name }}</span>
+                <img :src="icondataurl" v-if="icondataurl" max-width = "216px">
+            </div>
+            <button type ="button" @click = "reseticon">アイコン画像のリセット</button>
+        </div>
+      </div>
+
+      <div>
+          <h3>タイトル画像を選択(960×540)</h3>
           <div v-if="!tmbdataurl">
-          <input type="file" id="tmb" accept = "images/*" @change="readTmb" required>
+          <input type="file" id="tmb" accept=".png, .jpeg, .jpg, .ico" @change="readTmb"  width="960" height="540" required>
           </div>
           <div v-else>
               <div id="tmb-preview">
                   <span v-if="tmbfile.name != ''">{{ tmbfile.name }}</span>
-                  <img :src="tmbdataurl" v-if="tmbdataurl">
+                  <img :src="tmbdataurl" v-if="tmbdataurl" max-width = "960px">
               </div>
               <button type ="button" @click = "resetTmb">サムネのリセット</button>
           </div>
-      </div>`
+      </div>
 
       <div>
-          <h3>プレイ画像を選択</h3>
+          <h3>プレイ中画像1枚目を選択(960×540)</h3>
           <div v-if="!imgdataurl">
-              <input type="file" id="img" accept = "images/*" @change="readImg" required>
+              <input type="file" id="img" accept = ".png, .jpeg, .jpg, .ico" @change="readImg" width="960" height="540" required>
           </div>
           <div v-else>
               <div id="img-preview">
                   <span v-if="imgfile.name != ''">{{ imgfile.name }}</span>
-                  <img :src="imgdataurl" v-if="imgdataurl">
+                  <img :src="imgdataurl" v-if="imgdataurl" max-width = "960px">
               </div>
-              <button type ="button" @click = "resetImg">サムネのリセット</button>
+              <button type ="button" @click = "resetImg">プレイ中画像1のリセット</button>
           </div>
+      </div>
+
+      <div>
+        <h3>プレイ中画像2枚目を選択(960×540)</h3>
+        <div v-if="!imgdata2url">
+            <input type="file" id="img2" accept = ".png, .jpeg, .jpg, .ico" @change="readImg2" width="960" height="540" required>
+        </div>
+        <div v-else>
+            <div id="img2-preview">
+                <span v-if="imgfile2.name != ''">{{ imgfile2.name }}</span>
+                <img :src="imgdata2url" v-if="imgdata2url" max-width = "960px">
+            </div>
+            <button type ="button" @click = "resetImg2">プレイ中画像2のリセット</button>
+        </div>
+      </div>
+
+      <div>
+        <h3>プレイ中画像3枚目を選択(960×540)</h3>
+        <div v-if="!imgdata3url">
+            <input type="file" id="img3" accept = ".png, .jpeg, .jpg, .ico" @change="readImg3" width="960" height="540" required>
+        </div>
+        <div v-else>
+            <div id="img3-preview">
+                <span v-if="imgfile3.name != ''">{{ imgfile3.name }}</span>
+                <img :src="imgdata3url" v-if="imgdata3url" max-width = "960px">
+            </div>
+            <button type ="button" @click = "resetImg3">プレイ中画像3のリセット</button>
+        </div>
       </div>
 
       <h3>作品URL</h3>
@@ -107,6 +149,7 @@
 
       <button type ="button" @click = "showData">submit</button>
     </div>
+
 
 
    <!-- <div id="message">
@@ -200,14 +243,38 @@
             developer:'',
             caption:'',
             genre:'',
+            icondataurl:null,
+            iconfile:null,
             tmbdataurl:null,
             tmbfile:null,
             imgdataurl:null,
             imgfile:null,
+            imgdata2url:null,
+            imgfile2:null,
+            imgdata3url:null,
+            imgfile3:null,
             URL:'',
           }
       },
       methods:{
+        readicon(){
+          const inputicon = document.getElementById('icon');
+          if(inputicon.files.length == 0){
+              return ;
+          }
+            
+          this.iconfile = inputicon.files[0];
+          console.log(this.icondataurl);
+          const reader = new FileReader();
+          reader.onload = (e) => {
+              this.icondataurl = e.target.result;
+          }
+          reader.readAsDataURL(this.iconfile);
+        },
+        reseticon(){
+          this.icondataurl = null;
+          this.iconfile = null;
+        },
         readTmb(){
             const inputTmb = document.getElementById('tmb');
             if(inputTmb.files.length == 0){
@@ -232,7 +299,6 @@
             if(inputImg.files.length == 0){
                 return ;
             }
-            
             this.imgfile = inputImg.files[0];
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -244,9 +310,137 @@
             this.imgdataurl = null;
             this.imgfile = null;
         },
+        readImg2(){
+            const inputImg2 = document.getElementById('img2');
+            if(inputImg2.files.length == 0){
+                return ;
+            }
+            this.imgfile2 = inputImg2.files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.imgdata2url = e.target.result;
+            }
+            reader.readAsDataURL(this.imgfile2);
+        },
+        resetImg2(){
+          this.imgdata2url = null;
+          this.imgfile2 = null;
+        },
+
+        readImg3(){
+          const inputImg3 = document.getElementById('img3');
+            if(inputImg3.files.length == 0){
+                return ;
+            }
+            this.imgfile3 = inputImg3.files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.imgdata3url = e.target.result;
+            }
+            reader.readAsDataURL(this.imgfile3);
+        },
+        resetImg3(){
+          this.imgdata3url = null;
+          this.imgfile3 = null;
+        },
 
         showData(){
-            var data={};
+            if(this.title == ''){
+              alert("タイトルを入力してください")
+              return;
+            }
+            else if(this.developer == ''){
+              alert("開発者名を入力してください")
+              return;
+            }
+            else if(this.caption == ''){
+              alert("説明文を入力してください")
+              return;
+            }
+            else if(this.genre == ''){
+              alert("ジャンルを選択してください")
+              return;
+            }
+            else if(this.URL == ''){
+              alert("URLを入力してください")
+              return;
+            } 
+            else if(this.iconfile == null){
+              alert("アイコン画像を選択してください")
+              return;
+            }
+            else if(this.tmbfile == null){
+              alert("タイトル画像を選択してください")
+              return;
+            }
+            else if(this.imgfile == null){
+              alert("ゲーム画像1枚目を選択してください")
+              return;
+            }
+            else if(this.imgfile2 == null){
+              alert("ゲーム画像2枚目を選択してください")
+              return;
+            }
+            else if(this.imgfile3 == null){
+              alert("ゲーム画像3枚目を選択してください")
+              return;
+            }
+            else{
+              var data={};
+              var cnt = 0;
+              console.log(this.title);
+              console.log(developer.value);
+              console.log(caption.value);
+
+              data["title"] = title.value;
+              data["developer"] = developer.value;
+              data["caption"] = caption.value;
+
+              data["tags"] = this.genre;
+              data["URL"] = this.URL;
+
+              //連想配列をJsonに変化
+              var json_data = JSON.stringify(data);
+              console.log(json_data);  
+              const blob = new Blob([json_data],{type:"application/json"});
+              console.log(blob);
+              const storageRefjson = ref(storage,this.developer+'/' + this.developer + '_.data.json');
+              uploadBytes(storageRefjson, blob).then((snapshot) => {
+                console.log('Uploaded Json !');
+                alert("JSONファイルをアップロードしました");
+              });
+
+              const storageRefIcon = ref(storage, this.developer+'/' + this.developer + '_icon');
+              uploadBytes(storageRefIcon, this.iconfile).then((snapshot) => {
+                console.log('Uploaded icon !');
+                alert("アイコン画像をアップロードしました");
+              });
+              
+              const storageRefTmb = ref(storage, this.developer+'/' + this.developer + '_thumbnail');
+              uploadBytes(storageRefTmb, this.tmbfile).then((snapshot) => {
+                console.log('Uploaded thumbnail !');
+                alert("タイトル画像をアップロードしました");
+              });
+              
+              const storageRefImg = ref(storage, this.developer+'/' + this.developer + 'image');
+              uploadBytes(storageRefImg, this.imgfile).then((snapshot) => {
+                console.log('Uploaded image !');
+                alert("ゲーム画像1枚目をアップロードしました");
+              });
+
+              const storageRefImg2 = ref(storage, this.developer+'/' + this.developer + 'image2');
+              uploadBytes(storageRefImg2, this.imgfile2).then((snapshot) => {
+                console.log('Uploaded image2 !');
+                alert("ゲーム画像2枚目をアップロードしました");
+              });
+
+              const storageRefImg3 = ref(storage, this.developer+'/' + this.developer + 'image3');
+              uploadBytes(storageRefImg3, this.imgfile3).then((snapshot) => {
+                console.log('Uploaded image !');
+                alert("ゲーム画像3枚目をアップロードしました");
+              });
+            }
+            /*var data={};
             console.log(this.title);
             console.log(developer.value);
             console.log(caption.value);
@@ -263,23 +457,42 @@
             console.log(json_data);  
             const blob = new Blob([json_data],{type:"application/json"});
             console.log(blob);
-            const storageRefjson = ref(storage,this.developer+'/.data.json');
+            const storageRefjson = ref(storage,this.developer+'/' + this.developer + '_.data.json');
             uploadBytes(storageRefjson, blob).then((snapshot) => {
               console.log('Uploaded Json !');
               alert("JSONファイルをアップロードしました");
             });
+
+            const storageRefIcon = ref(storage, this.developer+'/' + this.developer + '_icon');
+            uploadBytes(storageRefIcon, this.iconfile).then((snapshot) => {
+              console.log('Uploaded icon !');
+              alert("アイコン画像をアップロードしました");
+            });
             
-            const storageRefTmb = ref(storage, this.developer+'/thumbnail');
+            const storageRefTmb = ref(storage, this.developer+'/' + this.developer + '_thumbnail');
             uploadBytes(storageRefTmb, this.tmbfile).then((snapshot) => {
               console.log('Uploaded thumbnail !');
-              alert("サムネイルをアップロードしました");
+              alert("タイトル画像をアップロードしました");
             });
             
-            const storageRefImg = ref(storage, this.developer+'/image');
+            const storageRefImg = ref(storage, this.developer+'/' + this.developer + 'image');
             uploadBytes(storageRefImg, this.imgfile).then((snapshot) => {
               console.log('Uploaded image !');
-              alert("ゲーム画像をアップロードしました");
+              alert("ゲーム画像1枚目をアップロードしました");
             });
+
+            const storageRefImg2 = ref(storage, this.developer+'/' + this.developer + 'image2');
+            uploadBytes(storageRefImg2, this.imgfile2).then((snapshot) => {
+              console.log('Uploaded image2 !');
+              alert("ゲーム画像2枚目をアップロードしました");
+            });
+
+            const storageRefImg3 = ref(storage, this.developer+'/' + this.developer + 'image3');
+            uploadBytes(storageRefImg3, this.imgfile3).then((snapshot) => {
+              console.log('Uploaded image !');
+              alert("ゲーム画像3枚目をアップロードしました");
+              alert("登録完了です！！ありがとうございます")
+            });*/
         },
 
     }
