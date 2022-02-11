@@ -2,14 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!--<link href="../style.css" rel="stylesheet">-->
+
+    <title>スライドテスト</title>
 </head>
 <body>
-    <p>Hello!!</p>
+    <!-- / slideshow -->
     <img id="myimg">
     <div id="contents"></div>
+
+    <div class = "container" id = "container">
+        <div class = "slider">
+            <div class = "slides" id="slides">
+
+            <!--ここに動的にHTML生成する-->
+
+            </div>
+        </div>
+        <!-- / slider -->
+
+        <!-- #Controls -->
+        <a class="control fas fa-chevron-left" id="prev"></a>
+        <a class="control fas fa-chevron-right" id="next"></a>
+   
+        <!-- #Position dots -->
+        <div class="dots">
+            <span class="dots__single" id=""></span>
+            <span class="dots__single" id=""></span>
+            <span class="dots__single" id=""></span>
+            <span class="dots__single" id=""></span>
+        </div>
+   
+    </div>
 </body>
 
 
@@ -100,13 +126,17 @@
     listAll(storageRef)
         .then((res) => {
           res.prefixes.forEach((folderRef) => {
-          console.log(folderRef.name);
-          var testRef = ref(storage,folderRef.name);
-          console.log(testRef);
-          //フォルダ内の探索
+            console.log(folderRef.name);
+            var testRef = ref(storage,folderRef.name);
+            console.log(testRef);
+            
+          
           listAll(testRef)
             .then((res) => {
                 res.items.forEach((itemRef) => {
+
+                    
+
                     //JSONの表示
                     if(itemRef.name == folderRef.name+'_.data.json'){
                         console.log(itemRef.name);
@@ -118,13 +148,13 @@
                                 var obj = JSON.parse(JSON.stringify(data));
                                 console.log(obj);
                                 //
-                                /*var p = document.createElement('p');
+                                var p = document.createElement('p');
                                 p.innerHTML = testRef.name + "のJSONデータ"
                                 var p_json = document.createElement('p');
                                 p_json.innerText = JSON.stringify(data);
                                 var content_area = document.getElementById("contents");
                                 content_area.appendChild(p);
-                                content_area.appendChild(p_json); */
+                                content_area.appendChild(p_json); 
                                 //
                             });
                             }).catch(function(error){
@@ -142,13 +172,13 @@
                                         console.log(file);
                                     })
                         //image動的に生成
-                        /*var p = document.createElement('p');
-                        p.innerHTML = testRef.name + "のゲーム画像"
+                        var p = document.createElement('p');
+                        p.innerHTML = testRef.name + "のゲーム画像1"
                         var img_element = document.createElement('img');
                         img_element.src = url;
                         var content_area = document.getElementById("contents");
                         content_area.appendChild(p);
-                        content_area.appendChild(img_element);*/
+                        content_area.appendChild(img_element);
 
                         }).catch(function(error) {
                             console.log(error);
@@ -165,13 +195,13 @@
                                         console.log(file);
                                     })
                         //image動的に生成
-                        /*var p = document.createElement('p');
-                        p.innerHTML = testRef.name + "のゲーム画像"
+                        var p = document.createElement('p');
+                        p.innerHTML = testRef.name + "のゲーム画像2"
                         var img_element = document.createElement('img');
                         img_element.src = url;
                         var content_area = document.getElementById("contents");
                         content_area.appendChild(p);
-                        content_area.appendChild(img_element); */
+                        content_area.appendChild(img_element);
                         }).catch(function(error) {
                             console.log(error);
                         });
@@ -187,18 +217,18 @@
                                         console.log(file);
                                     })
                         //image動的に生成
-                        /*var p = document.createElement('p');
-                        p.innerHTML = testRef.name + "のゲーム画像"
+                        var p = document.createElement('p');
+                        p.innerHTML = testRef.name + "のゲーム画像3"
                         var img_element = document.createElement('img');
                         img_element.src = url;
                         var content_area = document.getElementById("contents");
                         content_area.appendChild(p);
-                        content_area.appendChild(img_element); */
+                        content_area.appendChild(img_element);
                         }).catch(function(error) {
                             console.log(error);
                         });
                     }
-                    else if(itemRef.name == folderRef+'_thumbnail'){
+                    else if(itemRef.name == folderRef.name+'_thumbnail'){
                         console.log(itemRef.name)
                         getDownloadURL(ref(itemRef))
                             .then((url) => {
@@ -210,13 +240,13 @@
                                     })
 
                         //image動的に生成
-                        /*var p = document.createElement('p');
+                        var p = document.createElement('p');
                         p.innerHTML = testRef.name + "のサムネ画像"
                         var img_element = document.createElement('img');
                         img_element.src = url;
                         var content_area = document.getElementById("contents");
                         content_area.appendChild(p);
-                        content_area.appendChild(img_element); */
+                        content_area.appendChild(img_element); 
                         }).catch(function(error) {
                             console.log(error);
                         });
@@ -233,13 +263,13 @@
                                     })
 
                         //image動的に生成
-                        /*var p = document.createElement('p');
-                        p.innerHTML = testRef.name + "のサムネ画像"
+                        var p = document.createElement('p');
+                        p.innerHTML = testRef.name + "のアイコン画像"
                         var img_element = document.createElement('img');
                         img_element.src = url;
                         var content_area = document.getElementById("contents");
                         content_area.appendChild(p);
-                        content_area.appendChild(img_element);*/
+                        content_area.appendChild(img_element);
 
                         }).catch(function(error) {
                             console.log(error);
@@ -254,7 +284,5 @@
         }).catch((folderError) => {
             console.log(folderError);
         });
-
-
 </script>
 </html>
